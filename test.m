@@ -20,31 +20,36 @@ cratio_origin  = 1;                    % damping coefficient ratio
 
 %% Get random simulation data
 data_row = [];
-for i = 0.3:0.02:1.7
+[MAX_origin, RMS_origin] = Two_Axle_Simulation_ISO8608(ms_origin, mus_origin, iy_origin, cs_origin, ks_origin, ...
+    kt_origin, h_origin, kratio_origin, cratio_origin, wr_origin, cg_origin, wb_origin, alpha_origin);
+for i = 0.2:0.02:1.8
 
     % Create random inputs
-    ms      = ms_origin     * 1; % Random value between 0.5 and 1.5
-    mus     = mus_origin    * 1;
-    iy      = iy_origin     * 1;
-    cs      = cs_origin     * 1;
-    ks      = ks_origin     * i;
-    kt      = kt_origin     * 1;
-    h       = h_origin      * 1;
-    wr      = wr_origin     * 1;
-    cg      = cg_origin     * 1;
-    wb      = wb_origin     * 1;
-    alpha   = alpha_origin  * 1;
-    kratio  = kratio_origin * 1;
-    cratio  = cratio_origin * 1;
+    ms      = ms_origin*i; % Random value between 0.5 and 1.5
+    mus     = mus_origin;
+    iy      = iy_origin;
+    cs      = cs_origin;
+    ks      = ks_origin;
+    kt      = kt_origin;
+    h       = h_origin;
+    wr      = wr_origin;
+    cg      = cg_origin;
+    wb      = wb_origin;
+    alpha   = alpha_origin;
+    kratio  = kratio_origin;
+    cratio  = cratio_origin;
 
     % Run the simulation
     [MAX, RMS] = Two_Axle_Simulation_ISO8608(ms, mus, iy, cs, ks, kt, h, kratio, cratio, wr, cg, wb, alpha);
-    data_row(end+1,:) = [ms, mus, iy, cs, ks, kt, h, kratio, cratio, wr, cg, wb, alpha, MAX, RMS];
+    SDPI = 0.33 * (0.6 * RMS(2) / RMS_origin(2) + 0.2 * RMS(5) / RMS_origin(5) + 0.2 * RMS(6) / RMS_origin(6)) ...
+        + 0.01 * (MAX(4) + MAX(8)) / (MAX_origin(4) + MAX_origin(8)) ...
+        + 0.66 * (RMS(3) + RMS(7)) / (RMS_origin(3) + RMS_origin(7));
+    data_row(end+1,:) = [ms, mus, iy, cs, ks, kt, h, kratio, cratio, wr, cg, wb, alpha, MAX, RMS, SDPI];
     
 end
 
 
 %% Append the new data row
 filename = 'Test.xlsx';
-writematrix(data_row, filename, 'WriteMode', 'append');
+writematrix(data_row, filename, 'WriteMode', 'overwrite');
 
