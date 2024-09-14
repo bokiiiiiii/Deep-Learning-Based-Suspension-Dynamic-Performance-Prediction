@@ -1,0 +1,2 @@
+1. It can predict mutiple output but the result is very bad
+2. It is very good to predict one output
