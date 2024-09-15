@@ -102,7 +102,7 @@ ann.add(tf.keras.layers.Dense(units=Y.shape[1]))
 ann.compile(optimizer='adam', loss='mean_absolute_percentage_error')
 
 # Training the ANN on the Training set
-ann.fit(X_train, Y_train, batch_size = 32, epochs = 30)
+ann.fit(X_train, Y_train, batch_size = 32, epochs = 100)
 
 
 ## Making the predictions and evaluating the model
