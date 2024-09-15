@@ -8,16 +8,16 @@ tf.config.run_functions_eagerly(True)
 class PartialDense(tf.keras.layers.Layer):
     def __init__(self, units, connections_per_node, **kwargs):
         super(PartialDense, self).__init__(**kwargs)
-        self.units = units
+        self.units                = units
         self.connections_per_node = connections_per_node
 
     def build(self, input_shape):
         self.input_dim = input_shape[-1]  # Automatically get the input dimension
-        self.kernel = self.add_weight(name='kernel',
+        self.kernel    = self.add_weight(name='kernel',
                                       shape=(self.input_dim, self.units),
                                       initializer='glorot_uniform',
                                       trainable=True)
-        self.bias   = self.add_weight(name='bias',
+        self.bias      = self.add_weight(name='bias',
                                       shape=(self.units,),
                                       initializer='zeros',
                                       trainable=True)
@@ -92,7 +92,7 @@ ann.add(tf.keras.layers.Dense(units=64, activation='relu'))
 ann.add(tf.keras.layers.Dense(units=64, activation='relu'))
 ann.add(tf.keras.layers.Dense(units=128, activation='relu'))
 
-ann.add(PartialDense(units=Y.shape[1], connections_per_node=16))
+ann.add(PartialDense(units=Y.shape[1], connections_per_node=32))
 
 ann.add(tf.keras.layers.Dense(units=Y.shape[1]))
 
@@ -102,7 +102,7 @@ ann.add(tf.keras.layers.Dense(units=Y.shape[1]))
 ann.compile(optimizer='adam', loss='mean_absolute_percentage_error')
 
 # Training the ANN on the Training set
-ann.fit(X_train, Y_train, batch_size = 32, epochs = 100)
+ann.fit(X_train, Y_train, batch_size = 32, epochs = 30)
 
 
 ## Making the predictions and evaluating the model
