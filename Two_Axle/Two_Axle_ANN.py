@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+import json
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_percentage_error, r2_score
@@ -9,7 +10,20 @@ import matplotlib.pyplot as plt
 tf.config.run_functions_eagerly(True)
 
 
-## Partial Dense
+class R2History(tf.keras.callbacks.Callback):
+    def __init__(self, X_test, Y_test):
+        super(R2History, self).__init__()
+        self.X_test = X_test
+        self.Y_test = Y_test
+        self.r2_scores = []
+
+    def on_epoch_end(self, epoch, logs=None):
+        Y_pred = self.model.predict(self.X_test)
+        r2 = r2_score(self.Y_test, Y_pred, multioutput="uniform_average")
+        self.r2_scores.append(r2)
+        print(f"Epoch {epoch+1}: R-squared score = {r2}")
+
+
 class PartialDense(tf.keras.layers.Layer):
     def __init__(self, units, connections_per_node, **kwargs):
         super(PartialDense, self).__init__(**kwargs)
@@ -68,9 +82,9 @@ class PartialDense(tf.keras.layers.Layer):
 ## Data Preprocessing
 # Importing the dataset
 dataset = pd.read_excel("Two_Axle_Sim_Data.xlsx")
-X = dataset.iloc[2:1000, :12].values
+X = dataset.iloc[2:, :12].values
 # Y = dataset.iloc[2:, [16,20,22,25,26,29]].values
-Y = dataset.iloc[2:1000, [16, 20, 22, 23, 25, 26, 27, 29]].values
+Y = dataset.iloc[2:, [16, 20, 22, 23, 25, 26, 27, 29]].values
 
 # Units: N -> kN
 Y[:, 3] /= 1000
@@ -110,9 +124,12 @@ ann.add(tf.keras.layers.Dense(units=64, activation="relu"))
 ann.add(tf.keras.layers.Dense(units=64, activation="relu"))
 ann.add(tf.keras.layers.Dense(units=64, activation="relu"))
 ann.add(tf.keras.layers.Dense(units=64, activation="relu"))
-ann.add(tf.keras.layers.Dense(units=8))
+ann.add(tf.keras.layers.Dense(units=Y.shape[1]))
 
-## Training the ANN
+## Training the ANN with the R2 callback
+# Initialize the R2History callback
+r2_history = R2History(X_test, Y_test)
+
 # Compiling the ANN
 ann.compile(
     optimizer="adam",
@@ -121,8 +138,8 @@ ann.compile(
 )
 
 # Training the ANN on the Training set
-history = ann.fit(X_train, Y_train, batch_size=32, epochs=30)
-
+history = ann.fit(X_train, Y_train, batch_size=32, epochs=100, callbacks=[r2_history])
+history.history["r2_score"] = r2_history.r2_scores
 
 ## Making the predictions and evaluating the model
 # Predicting the Test set results
@@ -170,11 +187,19 @@ print(f"R-squared score: {r2}")
 # Saving the model to a file
 ann.save("two_axle_ann_model.h5")
 
+with open("two_axle_ann_model_history.json", "w") as f:
+    json.dump(history.history, f)
+
+with open("two_axle_ann_model_epoch.json", "w") as f:
+    json.dump(history.epoch, f)
+
+
 # Extract MAPE from the training history
 mape = history.history["mean_absolute_percentage_error"]
+r2_scores = history.history["r2_score"]
 
 # Plotting the MAPE over the epochs
-plt.plot(history.epoch, mape, label="Training MAPE")
+plt.plot(history.epoch, r2_scores, label="Training MAPE")
 plt.xlabel("Epoch")
 plt.ylabel("Mean Absolute Percentage Error")
 plt.title("MAPE vs. Epochs")
