@@ -115,28 +115,28 @@ def perturbation_sensitivity_analysis(model, X_test, Y_test, perturbation=0.005)
     sensitivity_df = pd.DataFrame(
         sensitivities,
         index=[
-            "ms",
-            "mus",
-            "iy",
-            "cs",
-            "ks",
-            "kt",
-            "h",
-            "kratio",
-            "cratio",
-            "wr",
-            "cg",
-            "wb",
+            r"$m_s$",
+            r"$m_{us}$",
+            r"$I_y$",
+            r"$c_s$",
+            r"$k_s$",
+            r"$k_t$",
+            r"$h$",
+            r"$kratio$",
+            r"$cratio$",
+            r"$r_w$",
+            r"$cg$",
+            r"$wb$",
         ],
         columns=[
-            "sws1_max",
-            "sws2_max",
-            "a_rms",
-            "dtl1_rms",
-            "theta_rms",
-            "dtheta_rms",
-            "dtl2_rms",
-            "SDPI",
+            r"$SWS_{(1)max}$",
+            r"$SWS_{(2)max}$",
+            r"$a_{rms}$",
+            r"$DTL_{(1)rms}$",
+            r"$\theta_{rms}$",
+            r"$\ddot{\theta}_{rms}$",
+            r"$DTL_{(2)rms}$",
+            r"$SDPI$",
         ],
     )
 
@@ -145,7 +145,7 @@ def perturbation_sensitivity_analysis(model, X_test, Y_test, perturbation=0.005)
 
 if __name__ == "__main__":
 
-    set_random_seed(22)
+    # set_random_seed(0)
 
     ## Data Preprocessing
     # Importing the dataset
@@ -189,6 +189,36 @@ if __name__ == "__main__":
     import seaborn as sns
     import numpy as np
 
+    # Reorder the columns and rows for both the heatmap and DataFrame
+    column_order = [
+        r"$a_{rms}$",
+        r"$\theta_{rms}$",
+        r"$\ddot{\theta}_{rms}$",
+        r"$SWS_{(1)max}$",
+        r"$SWS_{(2)max}$",
+        r"$DTL_{(1)rms}$",  # Moved two places back
+        r"$DTL_{(2)rms}$",
+        r"$SDPI$",
+    ]
+
+    row_order = [
+        r"$m_s$",
+        r"$m_{us}$",
+        r"$I_y$",
+        r"$k_s$",
+        r"$kratio$",
+        r"$c_s$",
+        r"$cratio$",
+        r"$k_t$",
+        r"$r_w$",
+        r"$h$",
+        r"$cg$",
+        r"$wb$",
+    ]
+
+    # Apply reordering to the DataFrame
+    sensitivity_df = sensitivity_df[column_order].reindex(row_order)
+
     sensitivity_matrix = sensitivity_df.values
 
     plt.rcParams.update(
@@ -209,7 +239,7 @@ if __name__ == "__main__":
         sensitivity_matrix,
         annot=True,
         fmt=".3f",
-        cmap="viridis",
+        cmap="Greys",
         xticklabels=sensitivity_df.columns,
         yticklabels=sensitivity_df.index,
         cbar_kws={"label": "Sensitivity"},
@@ -217,12 +247,18 @@ if __name__ == "__main__":
         linecolor="gray",
     )
 
-    plt.title("Sensitivity Analysis Heatmap", pad=20, fontsize=14)
-    plt.xlabel("Outputs", labelpad=10)
-    plt.ylabel("Inputs", labelpad=10)
+    plt.title(
+        "Heatmap of Input Sensitivity on Dynamic Suspension Performance Metrics",
+        pad=20,
+        fontsize=14,
+        fontweight="bold",
+    )
+    plt.xlabel("Dynamic Suspension Performance Metrics (Outputs)", labelpad=10)
+    plt.ylabel("Vehicle and Suspension System Parameters (Inputs)", labelpad=10)
+
+    plt.xticks(rotation=45, ha="right", fontweight="bold")
+    plt.yticks(rotation=45, ha="right", fontweight="bold")
 
     plt.tight_layout()
-
-    # plt.savefig('sensitivity_analysis_heatmap.png', dpi=300, bbox_inches='tight')
 
     plt.show()
