@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Apply smoothing with a window size
-WINDOW_SIZE = 20
+WINDOW_SIZE = 25
 
 # Load data from JSON files
 with open("two_axle_ann_model_history.json", "r") as f:
@@ -47,19 +47,19 @@ plt.rcParams["xtick.color"] = "black"
 plt.rcParams["ytick.color"] = "black"
 
 # ---- Plot MAPE ----
-fig, ax1 = plt.subplots(figsize=(8, 5))  # MAPE plot
+fig, ax1 = plt.subplots(figsize=(7, 6))  # MAPE plot
 ax1.plot(
     smoothed_epochs_ann,
     ann_mape_smooth,
     color="black",
-    label="ANN Training MAPE",
+    label="DNN Model",
     linestyle="-",
 )
 ax1.plot(
     smoothed_epochs_mln,
     ann_mln_mape_smooth,
     color="gray",
-    label="ANN-MLN Training MAPE",
+    label="MTL-DBN-DNN Model",
     linestyle="--",
 )
 ax1.set_yscale("log")  # Optional log scale if needed
@@ -67,34 +67,38 @@ ax1.set_yscale("log")  # Optional log scale if needed
 ax1.spines["top"].set_visible(False)
 ax1.spines["right"].set_visible(False)
 ax1.legend()
-ax1.set_xlabel("Epoch", fontsize=12)
+ax1.set_xlabel("Training Epoch", fontsize=12)
 ax1.set_ylabel("Mean Absolute Percentage Error", fontsize=12)
-ax1.set_title("MAPE vs. Epochs", fontsize=14)
+ax1.set_title(
+    "Convergence of Mean Absolute Percentage Error Across Training Epochs",
+    fontsize=14,
+    fontweight="bold",
+)
 ax1.grid(True, which="both", linestyle="--", linewidth=0.5)
 
 plt.tight_layout()
 
 # ---- Plot R² ----
-fig, ax2 = plt.subplots(figsize=(8, 5))  # R² plot
+fig, ax2 = plt.subplots(figsize=(7, 6))  # R² plot
 ax2.plot(
     smoothed_epochs_ann,
     ann_r2_scores_smooth,
     color="black",
-    label="ANN Training R2",
+    label="DNN Model",
     linestyle="-",
 )
 ax2.plot(
     smoothed_epochs_mln,
     ann_mln_r2_scores_smooth,
     color="gray",
-    label="ANN-MLN Training R2",
+    label="MTL-DBN-DNN Model",
     linestyle="--",
 )
 
 # Labeling the plot for R²
-ax2.set_xlabel("Epoch", fontsize=12)
+ax2.set_xlabel("Training Epoch", fontsize=12)
 ax2.set_ylabel("R-squared", fontsize=12)
-ax2.set_title("R² vs. Epochs", fontsize=14)
+ax2.set_title("R-squared Across Training Epochs", fontsize=14, fontweight="bold")
 ax2.legend()
 ax2.grid(True, which="both", linestyle="--", linewidth=0.5)
 
