@@ -1,7 +1,6 @@
 # Deep Learning Based Suspension Dynamic Performance Prediection
 
-Kai Chun Lin* and Bo-Yi Lin*. “Deep Learning-Based Prediction of Suspension Dynamics Performance in
-Multi-Axle Vehicles”. arXiv preprint arXiv:2410.02566 (2024). [paper](https://arxiv.org/abs/2410.02566)
+Lin, B., and Lin, K., "Deep Learning–Based Prediction of Suspension Dynamics Performance in Multi-Axle Vehicles," SAE Int. J. Passeng. Veh. Syst. 18(3), 2025. [paper](https://doi.org/10.4271/15-18-03-0014)
 
 ## Abstract
 This paper is mainly to present a deep learning-based framework for predicting the dynamic performance of suspension systems for multi-axle vehicles which emphasizes the integration of machine learning with traditional vehicle dynamics modeling. A Multi-Task Deep Belief Network Deep Neural Network (MTL-DBN-DNN) was developed to capture the relationships between key vehicle parameters and suspension performance. The model was trained on the data generated from numerical simulations. This model not only demonstrated superior prediction accuracy but also increased computational speed compared to traditional DNN models. A comprehensive sensitivity analysis was conducted to understand the impact of various vehicle and suspension parameters on dynamic suspension performance. Furthermore, we introduce the Suspension Dynamic Performance Index (SDPI) in order to measure and quantify overall suspension performance and the effectiveness of multiple parameters. The findings highlight the effectiveness of multitask learning in improving predictive models for complex vehicle systems.
